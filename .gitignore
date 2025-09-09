@@ -31,4 +31,4 @@ logs/
 coverage/
 
 # Storage files
-storage/
+voxa-storage/
