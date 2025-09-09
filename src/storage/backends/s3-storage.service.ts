@@ -5,13 +5,13 @@ import * as https from 'https';
 
 @Injectable()
 export class S3StorageService implements StorageBackend {
-  private readonly bucketName = process.env.S3_BUCKET_NAME || 'voxa-storage';
-  private readonly region = process.env.AWS_REGION || 'us-east-1';
+  private readonly bucketName = process.env.S3_BUCKET_NAME;
+  private readonly region = process.env.AWS_REGION;
   private readonly accessKeyId = process.env.AWS_ACCESS_KEY_ID;
   private readonly secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
 
   async store(id: string, data: Buffer): Promise<string> {
-    const key = id; // Simplified - no "files/" prefix
+    const key = id; 
     await this.uploadToS3(key, data);
     return key;
   }
@@ -29,7 +29,7 @@ export class S3StorageService implements StorageBackend {
   }
 
   private async uploadToS3(key: string, data: Buffer): Promise<string> {
-    const host = `${this.bucketName}.s3.${this.region}.amazonaws.com`; // Fixed host format
+    const host = `${this.bucketName}.s3.${this.region}.amazonaws.com`; 
     const url = `https://${host}/${key}`;
     const method = 'PUT';
     
@@ -43,11 +43,18 @@ export class S3StorageService implements StorageBackend {
         if (res.statusCode === 200) {
           resolve(key);
         } else {
-          reject(new Error(`S3 upload failed: ${res.statusCode} ${res.statusMessage}`));
+          let errorBody = '';
+          res.on('data', (chunk) => errorBody += chunk);
+          res.on('end', () => {
+            reject(new Error(`S3 upload failed: ${res.statusCode} ${res.statusMessage}\nResponse: ${errorBody}`));
+          });
         }
       });
 
-      req.on('error', reject);
+      req.on('error', (error) => {
+        reject(error);
+      });
+      
       req.write(data);
       req.end();
     });
@@ -142,15 +149,21 @@ export class S3StorageService implements StorageBackend {
   private createCanonicalRequest(method: string, key: string, headers: Record<string, string>, signedHeaders: string, body?: Buffer): string {
     const canonicalUri = `/${key}`;
     const canonicalQueryString = '';
-    const canonicalHeaders = Object.keys(headers)
+    
+    const sortedHeaders = Object.keys(headers)
       .map(k => k.toLowerCase())
-      .sort()
-      .map(k => `${k}:${headers[Object.keys(headers).find(h => h.toLowerCase() === k)!]}`)
+      .sort();
+    
+    const canonicalHeaders = sortedHeaders
+      .map(k => {
+        const originalKey = Object.keys(headers).find(orig => orig.toLowerCase() === k);
+        return `${k}:${headers[originalKey]}`;
+      })
       .join('\n') + '\n';
     
     const payloadHash = this.getContentSha256(body);
     
-    return [
+    const canonicalRequest = [
       method,
       canonicalUri,
       canonicalQueryString,
@@ -158,6 +171,8 @@ export class S3StorageService implements StorageBackend {
       signedHeaders,
       payloadHash
     ].join('\n');
+    
+    return canonicalRequest;
   }
 
   private createStringToSign(algorithm: string, credentialScope: string, canonicalRequest: string, amzDate: string): string {

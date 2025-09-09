@@ -4,11 +4,11 @@ import { FTPResponse, Client } from 'basic-ftp';
 
 @Injectable()
 export class FtpStorageService implements StorageBackend {
-  private readonly host = process.env.FTP_HOST || 'localhost';
-  private readonly port = parseInt(process.env.FTP_PORT || '21');
-  private readonly username = process.env.FTP_USERNAME || 'anonymous';
-  private readonly password = process.env.FTP_PASSWORD || '';
-  private readonly basePath = process.env.FTP_BASE_PATH || '/voxa-storage';
+  private readonly host = process.env.FTP_HOST ;
+  private readonly port = parseInt(process.env.FTP_PORT);
+  private readonly username = process.env.FTP_USERNAME ;
+  private readonly password = process.env.FTP_PASSWORD ;
+  private readonly basePath = process.env.FTP_BASE_PATH ;
 
   async store(id: string, data: Buffer): Promise<string> {
     const remotePath = `${this.basePath}/${id}`;
@@ -37,13 +37,11 @@ export class FtpStorageService implements StorageBackend {
         port: this.port,
         user: this.username,
         password: this.password,
-        secure: false, // Use plain FTP
+        secure: false, 
       });
       
-      // Ensure directory exists
       await client.ensureDir(this.basePath);
       
-      // Upload file
       const { Readable } = require('stream');
       const readable = Readable.from(data);
       await client.uploadFrom(readable, remotePath);
@@ -65,7 +63,6 @@ export class FtpStorageService implements StorageBackend {
         secure: false,
       });
       
-      // Use downloadTo with a more efficient approach
       const chunks: Buffer[] = [];
       const { PassThrough } = require('stream');
       const stream = new PassThrough();
@@ -92,10 +89,10 @@ export class FtpStorageService implements StorageBackend {
         port: this.port,
         user: this.username,
         password: this.password,
-        secure: false, // Use plain FTP
+        secure: false, 
       });
       
-      // Delete file
+     
       await client.remove(remotePath);
       
     } finally {

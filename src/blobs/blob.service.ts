@@ -16,6 +16,11 @@ export class BlobService {
   async storeBlob(createBlobDto: CreateBlobDto) {
     const { id, data } = createBlobDto;
     
+    // Check if file already exists
+    const existingBlob = await this.blobRepository.findOne({ where: { id } });
+    if (existingBlob) {
+      throw new BadRequestException(`File with ID '${id}' already exists`);
+    }
     let buffer: Buffer;
     try {
       // Convert base64 to Buffer

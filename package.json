@@ -15,8 +15,6 @@
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
     "test:api": "jest test/api.test.ts",
-    "test:storage": "jest test/storage.test.ts",
-    "test:simple": "jest test/simple.test.ts",
     "test:all": "jest test/",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
@@ -30,6 +28,7 @@
     "@nestjs/jwt": "^11.0.0",
     "@nestjs/passport": "^11.0.5",
     "@nestjs/platform-express": "^10.0.0",
+    "@nestjs/swagger": "^8.1.1",
     "@nestjs/typeorm": "^11.0.0",
     "basic-ftp": "^5.0.5",
     "class-transformer": "^0.5.1",
@@ -39,6 +38,7 @@
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1",
     "sqlite3": "^5.1.7",
+    "swagger-ui-express": "^5.0.1",
     "typeorm": "^0.3.26"
   },
   "devDependencies": {

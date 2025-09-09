@@ -18,7 +18,7 @@ export class DatabaseStorageService implements StorageBackend {
 
     await this.blobDataRepository.save(blobData);
 
-    return id; // Return the ID as the storage path
+    return id; 
   }
 
   async retrieve(path: string): Promise<Buffer> {

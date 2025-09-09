@@ -1,6 +1,7 @@
-import { Entity, PrimaryColumn, Column, CreateDateColumn } from 'typeorm';
+import { Entity, PrimaryColumn, Column, CreateDateColumn, Unique } from 'typeorm';
 
 @Entity('blobs')
+@Unique(['id']) // This prevents duplicate IDs at database level
 export class Blob {
   @PrimaryColumn()
   id: string;

@@ -5,7 +5,7 @@ import * as path from 'path';
 
 @Injectable()
 export class LocalStorageService implements StorageBackend {
-  private readonly storageDir = process.env.LOCAL_STORAGE_PATH || './storage';
+  private readonly storageDir = process.env.LOCAL_STORAGE_PATH ;
 
   constructor() {
     this.ensureStorageDirectory();

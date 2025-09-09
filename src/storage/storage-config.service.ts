@@ -31,7 +31,7 @@ export class StorageConfigService {
         return this.ftpStorageService;
       default:
         console.warn(`Unknown storage backend: ${name}. Falling back to local storage.`);
-        return this.localStorageService; // Default fallback
+        return this.localStorageService; 
     }
   }
 

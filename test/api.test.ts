@@ -15,7 +15,6 @@ describe('Voxa API - Postman Style Tests', () => {
 
     app = moduleFixture.createNestApplication();
     
-    // Add validation pipe like in main.ts
     app.useGlobalPipes(new ValidationPipe({
       whitelist: true,
       forbidNonWhitelisted: true,
@@ -26,7 +25,6 @@ describe('Voxa API - Postman Style Tests', () => {
   });
 
   afterAll(async () => {
-    // Get fresh token for cleanup
     try {
       const tokenResponse = await request(app.getHttpServer())
         .post('/auth/token');
@@ -39,11 +37,9 @@ describe('Voxa API - Postman Style Tests', () => {
             .delete(`/v1/blobs/${fileId}`)
             .set('Authorization', `Bearer ${cleanupToken}`);
         } catch (error) {
-          // Ignore cleanup errors
         }
       }
     } catch (error) {
-      // Ignore cleanup errors
     }
     
     await app.close();
@@ -74,7 +70,7 @@ describe('Voxa API - Postman Style Tests', () => {
       id: `test-file-${Date.now()}`, // ← Unique ID
       data: 'SGVsbG8gV29ybGQh'
     };
-    testFiles.push(fileData.id); // Track for cleanup
+    testFiles.push(fileData.id); 
 
     const response = await request(app.getHttpServer())
       .post('/v1/blobs')

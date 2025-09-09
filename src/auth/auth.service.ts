@@ -30,8 +30,7 @@ export class AuthService {
   }
 
   validateUser(payload: any): any {
-    // Simple validation - just return the payload
-    // No database lookup needed since we don't manage users
+
     return {
       userId: payload.sub,
       type: payload.type,
